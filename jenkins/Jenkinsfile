@@ -6,8 +6,7 @@ pipeline {
     }
 
     environment {
-        AERIAL_VEH_DOCKER_TAG = "${env.AERIAL_VEH_DOCKER_TAG}"
-        GROUND_VEH_DOCKER_TAG = "${env.GROUND_VEH_DOCKER_TAG}"
+        SCHEDULER_TRANSFORMER_DOCKER_TAG = "${env.SCHEDULER_TRANSFORMER_DOCKER_TAG}"
         DOCKER_REG_CREDS = "harbor-jenkins-creds"
     }
 
@@ -50,4 +49,5 @@ pipeline {
         //     slackSend (color: "#008000", message: "Job SUCCESSFUL: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         // }
     // }
+
 }
