@@ -1,0 +1,9 @@
+name: scheduler_transformer
+services:
+    scheduler_transformer:
+        image: harbor.trace.rid-intrasoft.eu/scheduler/scheduler_transformer:${SCHEDULER_TRANSFORMER_DOCKER_TAG}
+        container_name: scheduler_transformer
+        labels:
+            io.portainer.accesscontrol.teams: trace-all
+        
+  
