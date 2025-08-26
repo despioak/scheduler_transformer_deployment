@@ -1,0 +1,53 @@
+pipeline {
+    agent {
+        node {
+            label "${env.NODE_LABEL}"
+        }
+    }
+
+    environment {
+        AERIAL_VEH_DOCKER_TAG = "${env.AERIAL_VEH_DOCKER_TAG}"
+        GROUND_VEH_DOCKER_TAG = "${env.GROUND_VEH_DOCKER_TAG}"
+        DOCKER_REG_CREDS = "harbor-jenkins-creds"
+    }
+
+    stages {
+        // ************************************
+        // *** STOP THE PREVIOUS DEPLOYMENT ***
+        // ************************************
+        stage("Stop Previous Deployment") {
+            steps {
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${DOCKER_REG_CREDS}", usernameVariable: 'DOCKER_REG_USER', passwordVariable: 'DOCKER_REG_PASS']]){
+                    echo "***** Stop Previous Deployment *****"
+                    sh './bin/stop.sh'
+                }
+            }
+        }
+
+        // **********************
+        // *** NEW DEPLOYMENT ***
+        // **********************
+        stage("New Deployment") {
+            steps {
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${DOCKER_REG_CREDS}", usernameVariable: 'DOCKER_REG_USER', passwordVariable: 'DOCKER_REG_PASS'],
+                                [$class: 'StringBinding', credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'],
+                                [$class: 'StringBinding', credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    echo "***** Create New Deployment *****"
+                    sh './bin/deploy.sh'
+                }
+            }
+        }
+
+    }
+    // post{
+    //     failure{
+    //         // slackSend (color: "#FF0000", message: "Job FAILED: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    //         sh 'docker image rm ${APP_NAME}:test &> /dev/null || true'
+    //         sh 'DOCKER_TAG=test docker compose down --rmi all'
+    //     }
+
+        // success{
+        //     slackSend (color: "#008000", message: "Job SUCCESSFUL: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        // }
+    // }
+}

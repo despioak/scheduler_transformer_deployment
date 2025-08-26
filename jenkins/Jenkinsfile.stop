@@ -1,0 +1,32 @@
+pipeline {
+    agent {
+        node {
+            label "${env.NODE_LABEL}"
+        }
+    }
+
+
+    stages {
+        // ************************************
+        // *** STOP THE PREVIOUS DEPLOYMENT ***
+        // ************************************
+        stage("Stop Previous Deployment") {
+            steps {
+                echo "***** Stop Previous Deployment *****"
+                sh './bin/stop.sh'
+            }
+        }
+
+    }
+    // post{
+    //     failure{
+    //         // slackSend (color: "#FF0000", message: "Job FAILED: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    //         sh 'docker image rm ${APP_NAME}:test &> /dev/null || true'
+    //         sh 'DOCKER_TAG=test docker compose down --rmi all'
+    //     }
+
+        // success{
+        //     slackSend (color: "#008000", message: "Job SUCCESSFUL: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        // }
+    // }
+}
